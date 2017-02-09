@@ -3,7 +3,8 @@ from django.http import HttpResponse
 from rango.models import Category
 from rango.models import Page
 from rango.forms import PageForm
-
+from rango.forms import CategoryForm
+from django.core.urlresolvers import reverse
 
 def show_category(request, category_name_slug):
     # Create a context dictionary which we can pass
@@ -22,16 +23,19 @@ def show_category(request, category_name_slug):
 
         # Adds our results list to the template context under name pages.
         context_dict['pages'] = pages
+
         # We also add the category object from
         # the database to the context dictionary.
         # We'll use this in the template to verify that the category exists.
         context_dict['category'] = category
+
     except Category.DoesNotExist:
         # We get here if we didn't find the specified category.
         # Don't do anything -
         # the template will display the "no category" message for us.
         context_dict['category'] = None
         context_dict['pages'] = None
+
     # Go render the response and return it to the client.
     return render(request, 'rango/category.html', context_dict)
 
@@ -53,11 +57,9 @@ def index(request):
     return render(request, 'rango/index.html', context_dict)
 
 
-def about(request):
-    return render(request, 'rango/about.html')
+def about(response):
+    return render(response, 'rango/about.html')
 
-#Add this import at the top of the file
-from rango.forms import CategoryForm
 def add_category(request):
     form = CategoryForm()
     # A HTTP POST?
